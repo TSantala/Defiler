@@ -54,15 +54,17 @@ public class CVirtualDisk extends VirtualDisk{
 	 * -- buf is an DBuffer object that needs to be read/write from/to the volume.	
 	 * -- operation is either READ or WRITE  
 	 */
-	public void startRequest(DBuffer buf, DiskOperationType operation) throws IllegalArgumentException,
+	public synchronized void startRequest(DBuffer buf, DiskOperationType operation) throws IllegalArgumentException,
 			IOException {
-		if(operation == DiskOperationType.READ) {
-			this.readBlock(buf);
+		synchronized(buf) {
+			if(operation == DiskOperationType.READ) {
+				this.readBlock(buf);
+			}
+			else if(operation == DiskOperationType.WRITE) {
+				this.writeBlock(buf);
+			}
+			buf.ioComplete();
 		}
-		else if(operation == DiskOperationType.WRITE) {
-			this.writeBlock(buf);
-		}
-		buf.ioComplete();
 	}
 
 
@@ -85,7 +87,7 @@ public class CVirtualDisk extends VirtualDisk{
 	}
 
 
-	public void writeFileInode(int fileID) {
+	public synchronized void writeFileInode(int fileID) {
 		System.out.println("File inode write!: "+fileID);
 		try {
 			_file.seek(fileID);
@@ -97,7 +99,7 @@ public class CVirtualDisk extends VirtualDisk{
 	}
 
 
-	public void clearFileInode(int fileID) {
+	public synchronized void clearFileInode(int fileID) {
 		System.out.println("File inode clear!: "+fileID);
 		try {
 			_file.seek(fileID);

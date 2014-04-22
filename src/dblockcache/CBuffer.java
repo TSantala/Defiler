@@ -90,6 +90,9 @@ public class CBuffer extends DBuffer{
 	 */
 	public int read(byte[] buffer, int startOffset, int count){
 		System.out.println("Read called on block: "+_blockID);
+//		for(int i = 0; i < buffer.length; i++) {
+//			System.out.print("" + buffer[i]);
+//		}
 		this.waitValid();
 		int numRead = 0;
 		for(int i = 0; i < count; i++){
@@ -109,6 +112,9 @@ public class CBuffer extends DBuffer{
 	 */
 	public int write(byte[] buffer, int startOffset, int count){
 		System.out.println("Write called on block: "+_blockID);
+//		for(int i = 0; i < buffer.length; i++) {
+//			System.out.print("" + buffer[i]);
+//		}
 		int numWritten = 0;
 		for(int i = 0; i < count; i++){
 			if(startOffset+i < buffer.length){

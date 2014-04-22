@@ -88,9 +88,12 @@ public class CDFS extends DFS{
 			if(toRead > count)
 				toRead = count;
 
-			CBuffer cbuf = (CBuffer) _cache.getBlock(blockID++);
-			int amountRead = cbuf.read(buffer, startOffset, toRead);
-			_cache.releaseBlock(cbuf);
+			CBuffer cbuf= (CBuffer) _cache.getBlock(blockID++);;
+			int amountRead;
+			synchronized(cbuf){
+				amountRead = cbuf.read(buffer, startOffset, toRead);
+				_cache.releaseBlock(cbuf);
+			}
 
 			if(amountRead == -1){
 				System.out.println("Error occured while reading, breaking loop");
@@ -108,7 +111,7 @@ public class CDFS extends DFS{
 	 * writes to the file specified by DFileID from the buffer starting from the
 	 * buffer offset startOffset; at most count bytes are transferred
 	 */
-	public synchronized int write(DFileID dFID, byte[] buffer, int startOffset, int count) {
+	public int write(DFileID dFID, byte[] buffer, int startOffset, int count) {
 
 		int blockID = Constants.INODE_REGION_NUM_BLOCKS + dFID.getDFileID()*Constants.MAX_FILE_BLOCKS;
 		int totalWritten = 0;
@@ -118,13 +121,18 @@ public class CDFS extends DFS{
 		while(count!=0){
 
 			int toWrite = Constants.BLOCK_SIZE;
-			if(toWrite > count)
+			if(toWrite > count) {
+				System.out.println("less than one block to write");
 				toWrite = count;
+			}
 
 			System.out.println("Getting cbuf");
 			CBuffer cbuf = (CBuffer) _cache.getBlock(blockID++);
-			int amountWritten = cbuf.write(buffer, startOffset, toWrite);
-			_cache.releaseBlock(cbuf);
+			int amountWritten;
+			synchronized(cbuf){
+				amountWritten = cbuf.write(buffer, startOffset, toWrite);
+				_cache.releaseBlock(cbuf);
+			}
 
 			if(amountWritten == -1){
 				System.out.println("Error occured while reading, breaking loop");

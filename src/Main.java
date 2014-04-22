@@ -27,16 +27,16 @@ public class Main {
 
 		System.out.println("Start!");
 
-//		Test1 test1 = new Test1(myDFS);
-//		test1.start();
+		Test1 test1 = new Test1(myDFS);
+		test1.start();
+		
+		Test2 test2 = new Test2(myDFS);
+		test2.start();
+		
+//		List<DFileID> stored = myDFS.listAllDFiles();
 //		
-//		Test2 test2 = new Test2(myDFS);
-//		test2.start();
-		
-		List<DFileID> stored = myDFS.listAllDFiles();
-		
-		for(DFileID id : stored)
-			System.out.println("Restored file: "+id.getDFileID());
+//		for(DFileID id : stored)
+//			System.out.println("Restored file: "+id.getDFileID());
 		
 //		while(!stored.isEmpty()){
 //			System.out.println("Removing one!");

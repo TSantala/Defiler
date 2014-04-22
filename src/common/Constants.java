@@ -20,9 +20,9 @@ public class Constants {
 	public static final int MAX_FILE_BLOCKS = 500;
 	public static final int MAX_FILE_SIZE = BLOCK_SIZE*MAX_FILE_BLOCKS; // Constraint on the max file size
 	public static final int MAX_DFILES = 512; // For recylcing DFileIDs
-	
-	public static final int INODE_REGION_NUM_BLOCKS = 1; // Matt: fill this in when you know proper number.
 
+	public static final int INODE_REGION_NUM_BLOCKS = 1;
+	
 	/* DStore Operation types */
 	public enum DiskOperationType {
 		READ, WRITE
@@ -30,4 +30,5 @@ public class Constants {
 
 	/* Virtual disk file/store name */
 	public static final String vdiskName = "DSTORE.dat";
+	
 }

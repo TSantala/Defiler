@@ -34,7 +34,7 @@ public class CBufferCache extends DBufferCache{
 	 * caller releases it. A "held" buffer cannot be evicted: its block ID
 	 * cannot change.
 	 */
-	public synchronized DBuffer getBlock(int blockID) {
+	public DBuffer getBlock(int blockID) {
 		int index = this.getCacheAddress(blockID);
 		if(index >= 0){
 			CBuffer temp = _cache.remove(index);
@@ -45,18 +45,23 @@ public class CBufferCache extends DBufferCache{
 		// Not in cache.
 		CBuffer newBlock = new CBuffer(blockID, this, _disk);
 		newBlock.setIsHeld(true);
-		if(_cache.size() > _cacheSize){
-			System.out.println("Cache size over max!!!");
-		}
-		if(_cache.size() == _cacheSize){
-			for(int i = 0; i < _cacheSize; i++){
-				if(!_cache.get(i).isBusy()){
-					_cache.remove(i);
-					break;
+		//synchronized(newBlock) {
+			if(_cache.size() > _cacheSize){
+				System.out.println("Cache size over max!!!");
+			}
+			if(_cache.size() == _cacheSize){
+				for(int i = 0; i < _cacheSize; i++){
+					if(!_cache.get(i).isBusy()){
+						CBuffer beingEvicted = _cache.get(i);
+						if(!beingEvicted.checkClean())
+							beingEvicted.startPush();
+						_cache.remove(i);
+						break;
+					}
 				}
 			}
-		}
-		_cache.add(newBlock);
+			_cache.add(newBlock);
+		//}
 		return newBlock;
 	}
 
